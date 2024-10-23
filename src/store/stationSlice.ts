@@ -6,14 +6,14 @@ import {
 } from "../service/stationInfoService";
 import { Station } from "../types/stations";
 
-interface initialState {
+interface stationState {
   stations: Station[] | null;
   currentStation: Station | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
-const initialState: initialState = {
+const initialState: stationState = {
   stations: null,
   currentStation: null,
   status: "idle",
@@ -40,7 +40,11 @@ export const fetchStreamURL = createAsyncThunk(
 const stationsSlice = createSlice({
   name: "stations",
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentStation: (state, action) => {
+      state.currentStation = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // fetchStationsの処理
@@ -71,5 +75,5 @@ const stationsSlice = createSlice({
       });
   },
 });
-
+export const { setCurrentStation } = stationsSlice.actions;
 export default stationsSlice.reducer;
