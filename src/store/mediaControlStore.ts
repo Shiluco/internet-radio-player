@@ -2,15 +2,13 @@ import { create } from "zustand";
 
 interface MediaControlState {
   isPlaying: boolean;
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null;
   setIsPlaying: (isPlaying: boolean) => void;
 }
 
 const useMediaControlStore = create<MediaControlState>((set) => ({
+  //状態
   isPlaying: false,
-  status: "idle",
-  error: null,
+  //関数
   setIsPlaying: (isPlaying: boolean) =>
     set((state) => ({ ...state, isPlaying })),
 }));

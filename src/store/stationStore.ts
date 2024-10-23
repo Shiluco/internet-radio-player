@@ -1,3 +1,4 @@
+"use client";
 import { create } from "zustand";
 import {
   fetchStations as fetchStationsService,
@@ -17,18 +18,39 @@ interface StationState {
 }
 
 const useStationStore = create<StationState>((set) => ({
+  // 状態
   stations: null,
   currentStation: null,
   streamUrl: null, // 初期値をnullに設定
   status: "idle",
   error: null,
 
+  // 関数
+
   // fetchStationsの処理
   fetchStations: async () => {
     set({ status: "loading", error: null });
     try {
-      const stations = await fetchStationsService();
-      set({ stations, status: "succeeded" });
+      const fetchStationsResult = await fetchStationsService();
+      console.log(
+        "fetchStationsResult.stations:",
+        fetchStationsResult.stations
+      );
+
+      if (
+        Array.isArray(fetchStationsResult.stations) &&
+        fetchStationsResult.stations.every(
+          (station: Station) => typeof station === "object"
+        )
+      ) {
+        console.log("Fetched stations match the Station type");
+        set({
+          stations: fetchStationsResult.stations,
+          status: "succeeded",
+        });
+      } else {
+        console.log("Fetched stations do not match the Station type");
+      }
     } catch (error) {
       set({
         status: "failed",

@@ -1,7 +1,10 @@
+import StationInfo from "./components/templates/stationInfo";
+
 export default function Home() {
   return (
     <>
-      <p>page</p>
+
+      <StationInfo />
     </>
   );
 }

@@ -16,5 +16,6 @@ export const fetchStations = async () => {
     throw new Error("Failed to fetch station list");
   }
   const stations = await response.json();
+  // console.log(stations);
   return stations;
 }
