@@ -16,8 +16,8 @@ const geistMono = localFont({
 
 const sfPro = localFont({
   src: [
-    { path: "./fonts/SFPro-Bold.woff", weight: "400" },
-    { path: "./fonts/SFPro-Bold.woff", weight: "700" },
+    { path: "./fonts/SFPro-Regular.woff", weight: "600" }, // 通常
+    { path: "./fonts/SFPro-Bold.woff", weight: "700" }, // 太字
   ],
   variable: "--font-sf-pro",
 });
