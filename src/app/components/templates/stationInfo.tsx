@@ -1,7 +1,7 @@
 "use client";
 import useStationStore from "@/store/stationStore";
 import { useEffect } from "react";
-import { Box, Typography } from "@mui/material"; // or the appropriate library
+
 
 const StationInfo = () => {
   const { fetchStations, stations, currentStation, setCurrentStation, status } =
@@ -23,17 +23,23 @@ const StationInfo = () => {
 
   return (
     <>
-      <Box display="flex" flexDirection="column" alignItems="flex-start">
-        <Box display="flex" flexDirection="column" alignItems="flex-start">
-          <Typography variant="h1">{currentStation?.presetID}</Typography>
-          <Typography variant="h6">{currentStation?.stationName}</Typography>
-        </Box>
-        <Box sx={{ transform: "rotate(90deg)", alignSelf: "flex-end" }}>
-          <Typography variant="body1">
-            {currentStation?.shoutcastURL}
-          </Typography>
-        </Box>
-      </Box>
+      <div className="h-screen">
+        <div className="relative h-1/2 bg-gray-200 text-black">
+          <p
+            className={`absolute bottom-6 left-2 font-sfPro`}
+            style={{ fontSize: "12rem", padding: 0, lineHeight: 1 }}
+          >
+            {currentStation?.presetID}
+          </p>
+          <p className={`absolute bottom-0 left-5 text-2xl font-sfPro `}>
+            {currentStation?.stationName}
+          </p>
+
+          {/* <p className="absolute bottom-0 right-0 text-sm text-gray-400 transform rotate-90 origin-bottom-right">
+        90度回転したテキスト
+    </p> */}
+        </div>
+      </div>
     </>
   );
 };
