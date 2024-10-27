@@ -40,7 +40,7 @@ const AudioController = () => {
           <p>{currentStation.metaURL}</p>
         </>
       ) : (
-        <p>fdsfasd</p>
+        <p>loading...</p>
       )}
     </div>
   );

@@ -1,17 +1,20 @@
 "use client";
-import { fetchStreamURL } from "@/service/stationInfoService";
+
 import useStationStore from "@/store/stationStore";
-import { stat } from "fs";
-import { useEffect, useState } from "react";
+
+import { useEffect } from "react";
 
 const StationInfo = () => {
-
-  const { fetchStations, stations, currentStation, setCurrentStation,fetchStationsStatus } =
-    useStationStore();
+  const {
+    fetchStations,
+    stations,
+    currentStation,
+    setCurrentStation,
+    fetchStationsStatus,
+    fetchStreamURL,
+  } = useStationStore();
 
   useEffect(() => {
-    
-
     if (fetchStationsStatus === "idle" || fetchStationsStatus === "loading") {
       const fetchData = async () => {
         try {
@@ -24,18 +27,14 @@ const StationInfo = () => {
       };
       fetchData();
     }
-    if (fetchStationsStatus === "succeeded")
-    {
-      const fetchMetaURL = async () =>
-      {
+    if (fetchStationsStatus === "succeeded") {
+      const fetchMetaURL = async () => {
         if (stations) {
-            // fetchStreamURLを各ステーションに対して非同期に実行し、その完了を待つ
-            await Promise.all(
-              stations.map((station) => fetchStreamURL(station.shoutcastURL))
-            );
-            setCurrentStation(stations[0].presetID);
+          // fetchStreamURLを各ステーションに対して非同期に実行し、その完了を待つ
+          await fetchStreamURL();
+          setCurrentStation(stations[0].presetID);
         }
-      }
+      };
       fetchMetaURL();
       console.log("infopage", stations);
       if (stations && stations.length > 0) {
@@ -45,12 +44,6 @@ const StationInfo = () => {
       }
     }
   }, [fetchStationsStatus]);
-
-
-
-  const handleShow = () => {
-    console.log(currentStation?.metaURL);
-  };
 
   return (
     <>
@@ -69,7 +62,6 @@ const StationInfo = () => {
             {"00." + (currentStation ? currentStation.presetID : "N/A")}
           </p>
         )}
-        <button onClick={handleShow}>consoleに表示</button>
 
         <p
           className={`absolute bottom-0 left-5 text-2xl font-sfPro  font-light`}

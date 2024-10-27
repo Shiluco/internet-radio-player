@@ -1,5 +1,5 @@
 "use client";
-import { create } from "zustand";
+import { create, StateCreator } from "zustand";
 import {
   fetchStations as fetchStationsService,
   fetchStreamURL as fetchStreamURLService,
@@ -10,9 +10,10 @@ interface StationState {
   stations: Station[] | null;
   currentStation: Station | null;
   fetchStationsStatus: "idle" | "loading" | "succeeded" | "failed";
+  fetchStreamURLStatus: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   fetchStations: () => Promise<void>;
-  fetchStreamURL: (presetID: number) => Promise<void>;
+  fetchStreamURL: () => Promise<void>;
   setCurrentStation: (presetID: number) => void;
 }
 
@@ -20,14 +21,14 @@ const useStationStore = create<StationState>((set) => ({
   stations: null,
   currentStation: null,
   fetchStationsStatus: "idle",
+  fetchStreamURLStatus: "idle",
   error: null,
 
-  // fetchStationsの処理
   fetchStations: async () => {
     set({ fetchStationsStatus: "loading", error: null });
     try {
-      const stations = await loadStations(); // データ取得関数を呼び出し
-      updateStationsState(set, stations); // 状態更新関数を呼び出し
+      const stations = await loadStations();
+      updateStationsState(set, stations);
     } catch (error) {
       set({
         fetchStationsStatus: "failed",
@@ -36,35 +37,32 @@ const useStationStore = create<StationState>((set) => ({
     }
   },
 
-  // fetchStreamURLの処理
-  fetchStreamURL: async (presetID: number) => {
-    set({ fetchStationsStatus: "loading", error: null });
+  fetchStreamURL: async () => {
+    set({ fetchStreamURLStatus: "loading", error: null });
     try {
-      const station = useStationStore
-        .getState()
-        .stations?.find((station) => station.presetID === presetID);
-      if (!station) throw new Error("Station not found");
+      const stations = useStationStore.getState().stations;
+      if (!stations) throw new Error("No stations available");
 
-      const streamUrl = await fetchStreamURLService(station.shoutcastURL);
-      set((state) => ({
-        stations:
-          state.stations?.map((station) =>
-            station.presetID === presetID
-              ? { ...station, metaURL: streamUrl }
-              : station
-          ) || state.stations,
-        fetchStationsStatus: "succeeded",
-      }));
+      const updatedStations = await Promise.all(
+        stations.map(async (station) => {
+          const streamUrl = await fetchStreamURLService(station.shoutcastURL);
+          return { ...station, metaURL: streamUrl };
+        })
+      );
+
+      set({
+        stations: updatedStations,
+        fetchStreamURLStatus: "succeeded",
+      });
     } catch (error) {
       set({
-        fetchStationsStatus: "failed",
-        error: (error as Error).message || "Failed to fetch stream URL",
+        fetchStreamURLStatus: "failed",
+        error: (error as Error).message || "Failed to fetch stream URLs",
       });
     }
   },
 
   setCurrentStation: (presetID: number) => {
-    
     set((state) => {
       const station =
         state.stations?.find((station) => station.presetID === presetID) ||
@@ -74,7 +72,6 @@ const useStationStore = create<StationState>((set) => ({
   },
 }));
 
-// データ取得ロジックのみ担当する関数
 const loadStations = async (): Promise<Station[]> => {
   const fetchStationsResult = await fetchStationsService();
   if (
@@ -90,9 +87,11 @@ const loadStations = async (): Promise<Station[]> => {
 };
 
 // 状態を更新する関数
-const updateStationsState = (set: any, stations: Station[]) =>
-{
-  console.log("stations:",stations);
+const updateStationsState = (
+  set: Parameters<StateCreator<StationState>>[0],
+  stations: Station[]
+) => {
+  console.log("stations:", stations);
   set({
     stations,
     fetchStationsStatus: "succeeded",
