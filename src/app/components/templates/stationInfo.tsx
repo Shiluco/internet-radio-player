@@ -5,46 +5,57 @@ import { stat } from "fs";
 import { useEffect, useState } from "react";
 
 const StationInfo = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { fetchStations, stations, currentStation, setCurrentStation } =
+
+  const { fetchStations, stations, currentStation, setCurrentStation,status } =
     useStationStore();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        await fetchStations(); // fetchStationsがPromiseを返す非同期関数であることを確認
-        console.log("staions:", stations);
+    
 
-        if (stations) {
-          // fetchStreamURLを各ステーションに対して非同期に実行し、その完了を待つ
-          await Promise.all(
-            stations.map((station) => fetchStreamURL(station.shoutcastURL))
-          );
-          setCurrentStation(stations[0].presetID);
+    if (status === "idle" || status === "loading") {
+      const fetchData = async () => {
+        try {
+          await fetchStations(); // fetchStationsがPromiseを返す非同期関数であることを確認
+          console.log("staions:", stations);
+        } catch (error) {
+          console.error(error);
+          // エラーハンドリングをここに追加
         }
-      } catch (error) {
-        console.error(error);
-        // エラーハンドリングをここに追加
-      } finally {
-        console.log("Stations:", stations);
-        setIsLoading(false);
-      }
-    };
-
-    if (!stations) {
+      };
       fetchData();
     }
-  }, [stations]);
+    if (status === "succeeded")
+    {
+      const fetchMetaURL = async () =>
+      {
+        if (stations) {
+            // fetchStreamURLを各ステーションに対して非同期に実行し、その完了を待つ
+            await Promise.all(
+              stations.map((station) => fetchStreamURL(station.shoutcastURL))
+            );
+            setCurrentStation(stations[0].presetID);
+        }
+      }
+      fetchMetaURL();
+      console.log("infopage", stations);
+      if (stations && stations.length > 0) {
+        setCurrentStation(stations[0].presetID);
+      } else {
+        console.log("No stations found");
+      }
+    }
+  }, [status]);
+
+
 
   const handleShow = () => {
-    console.log(stations);
+    console.log(currentStation?.metaURL);
   };
 
   return (
     <>
       <div className="relative h-1/2 bg-gray-200 text-black">
-        {isLoading ? (
+        {status === "idle" || status === "loading" ? (
           <p
             className={`absolute bottom-6 left-0 text-7xl font-sfPro font-bold`}
           >
