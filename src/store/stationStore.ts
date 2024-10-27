@@ -9,7 +9,7 @@ import { Station } from "../types/stations";
 interface StationState {
   stations: Station[] | null;
   currentStation: Station | null;
-  status: "idle" | "loading" | "succeeded" | "failed";
+  fetchStationsStatus: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   fetchStations: () => Promise<void>;
   fetchStreamURL: (presetID: number) => Promise<void>;
@@ -19,18 +19,18 @@ interface StationState {
 const useStationStore = create<StationState>((set) => ({
   stations: null,
   currentStation: null,
-  status: "idle",
+  fetchStationsStatus: "idle",
   error: null,
 
   // fetchStationsの処理
   fetchStations: async () => {
-    set({ status: "loading", error: null });
+    set({ fetchStationsStatus: "loading", error: null });
     try {
       const stations = await loadStations(); // データ取得関数を呼び出し
       updateStationsState(set, stations); // 状態更新関数を呼び出し
     } catch (error) {
       set({
-        status: "failed",
+        fetchStationsStatus: "failed",
         error: (error as Error).message || "Failed to fetch stations",
       });
     }
@@ -38,7 +38,7 @@ const useStationStore = create<StationState>((set) => ({
 
   // fetchStreamURLの処理
   fetchStreamURL: async (presetID: number) => {
-    set({ status: "loading", error: null });
+    set({ fetchStationsStatus: "loading", error: null });
     try {
       const station = useStationStore
         .getState()
@@ -53,11 +53,11 @@ const useStationStore = create<StationState>((set) => ({
               ? { ...station, metaURL: streamUrl }
               : station
           ) || state.stations,
-        status: "succeeded",
+        fetchStationsStatus: "succeeded",
       }));
     } catch (error) {
       set({
-        status: "failed",
+        fetchStationsStatus: "failed",
         error: (error as Error).message || "Failed to fetch stream URL",
       });
     }
@@ -95,7 +95,7 @@ const updateStationsState = (set: any, stations: Station[]) =>
   console.log("stations:",stations);
   set({
     stations,
-    status: "succeeded",
+    fetchStationsStatus: "succeeded",
     error: null,
   });
 };

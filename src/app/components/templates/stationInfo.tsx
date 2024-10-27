@@ -6,13 +6,13 @@ import { useEffect, useState } from "react";
 
 const StationInfo = () => {
 
-  const { fetchStations, stations, currentStation, setCurrentStation,status } =
+  const { fetchStations, stations, currentStation, setCurrentStation,fetchStationsStatus } =
     useStationStore();
 
   useEffect(() => {
     
 
-    if (status === "idle" || status === "loading") {
+    if (fetchStationsStatus === "idle" || fetchStationsStatus === "loading") {
       const fetchData = async () => {
         try {
           await fetchStations(); // fetchStationsがPromiseを返す非同期関数であることを確認
@@ -24,7 +24,7 @@ const StationInfo = () => {
       };
       fetchData();
     }
-    if (status === "succeeded")
+    if (fetchStationsStatus === "succeeded")
     {
       const fetchMetaURL = async () =>
       {
@@ -44,7 +44,7 @@ const StationInfo = () => {
         console.log("No stations found");
       }
     }
-  }, [status]);
+  }, [fetchStationsStatus]);
 
 
 
@@ -55,7 +55,7 @@ const StationInfo = () => {
   return (
     <>
       <div className="relative h-1/2 bg-gray-200 text-black">
-        {status === "idle" || status === "loading" ? (
+        {fetchStationsStatus === "idle" || fetchStationsStatus === "loading" ? (
           <p
             className={`absolute bottom-6 left-0 text-7xl font-sfPro font-bold`}
           >
