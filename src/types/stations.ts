@@ -1,6 +1,7 @@
 export type Station = {
   ID: number;
-  presetID: string;
+  presetID: number;
   stationName: string;
   shoutcastURL: string;
+  metaURL?: string;
 };

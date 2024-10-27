@@ -9,48 +9,25 @@ import { Station } from "../types/stations";
 interface StationState {
   stations: Station[] | null;
   currentStation: Station | null;
-  streamUrl: string | null; // streamUrl を状態に追加
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   fetchStations: () => Promise<void>;
-  fetchStreamURL: (station: Station) => Promise<void>;
-  setCurrentStation: (station: Station) => void;
+  fetchStreamURL: (presetID: number) => Promise<void>;
+  setCurrentStation: (presetID: number) => void;
 }
 
 const useStationStore = create<StationState>((set) => ({
-  // 状態
   stations: null,
   currentStation: null,
-  streamUrl: null, // 初期値をnullに設定
   status: "idle",
   error: null,
-
-  // 関数
 
   // fetchStationsの処理
   fetchStations: async () => {
     set({ status: "loading", error: null });
     try {
-      const fetchStationsResult = await fetchStationsService();
-      console.log(
-        "fetchStationsResult.stations:",
-        fetchStationsResult.stations
-      );
-
-      if (
-        Array.isArray(fetchStationsResult.stations) &&
-        fetchStationsResult.stations.every(
-          (station: Station) => typeof station === "object"
-        )
-      ) {
-        console.log("Fetched stations match the Station type");
-        set({
-          stations: fetchStationsResult.stations,
-          status: "succeeded",
-        });
-      } else {
-        console.log("Fetched stations do not match the Station type");
-      }
+      const stations = await loadStations(); // データ取得関数を呼び出し
+      updateStationsState(set, stations); // 状態更新関数を呼び出し
     } catch (error) {
       set({
         status: "failed",
@@ -60,11 +37,24 @@ const useStationStore = create<StationState>((set) => ({
   },
 
   // fetchStreamURLの処理
-  fetchStreamURL: async (station: Station) => {
+  fetchStreamURL: async (presetID: number) => {
     set({ status: "loading", error: null });
     try {
+      const station = useStationStore
+        .getState()
+        .stations?.find((station) => station.presetID === presetID);
+      if (!station) throw new Error("Station not found");
+
       const streamUrl = await fetchStreamURLService(station.shoutcastURL);
-      set({ streamUrl, status: "succeeded" }); // streamUrl を保存
+      set((state) => ({
+        stations:
+          state.stations?.map((station) =>
+            station.presetID === presetID
+              ? { ...station, metaURL: streamUrl }
+              : station
+          ) || state.stations,
+        status: "succeeded",
+      }));
     } catch (error) {
       set({
         status: "failed",
@@ -73,10 +63,41 @@ const useStationStore = create<StationState>((set) => ({
     }
   },
 
-  // currentStationの設定
-  setCurrentStation: (station: Station) => {
-    set({ currentStation: station });
+  setCurrentStation: (presetID: number) => {
+    
+    set((state) => {
+      const station =
+        state.stations?.find((station) => station.presetID === presetID) ||
+        null;
+      return { currentStation: station };
+    });
   },
 }));
+
+// データ取得ロジックのみ担当する関数
+const loadStations = async (): Promise<Station[]> => {
+  const fetchStationsResult = await fetchStationsService();
+  if (
+    Array.isArray(fetchStationsResult.stations) &&
+    fetchStationsResult.stations.every(
+      (station: Station) => typeof station === "object"
+    )
+  ) {
+    return fetchStationsResult.stations;
+  } else {
+    throw new Error("Invalid station data format");
+  }
+};
+
+// 状態を更新する関数
+const updateStationsState = (set: any, stations: Station[]) =>
+{
+  console.log("stations:",stations);
+  set({
+    stations,
+    status: "succeeded",
+    error: null,
+  });
+};
 
 export default useStationStore;
