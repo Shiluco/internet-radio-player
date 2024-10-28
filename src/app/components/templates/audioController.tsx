@@ -1,10 +1,34 @@
 "use client";
 import useMediaControlStore from "@/store/mediaControlStore";
 import useStationStore from "@/store/stationStore";
+import { useEffect, useState } from "react";
 
 const AudioController = () => {
   const { isPlaying, setIsPlaying } = useMediaControlStore();
   const { currentStation } = useStationStore();
+  const [isPlayable, setIsPlayable] = useState(false);
+
+  useEffect(() => {
+    const audioElement = document.getElementById(
+      "audio-player"
+    ) as HTMLAudioElement;
+
+    if (audioElement) {
+      const handleCanPlay = () => setIsPlayable(true);
+      const handleError = () => {
+        setIsPlayable(false);
+        alert("音声を再生できません。");
+      };
+
+      audioElement.addEventListener("canplaythrough", handleCanPlay);
+      audioElement.addEventListener("error", handleError);
+
+      return () => {
+        audioElement.removeEventListener("canplaythrough", handleCanPlay);
+        audioElement.removeEventListener("error", handleError);
+      };
+    }
+  }, [currentStation]);
 
   const handlePlayPause = () => {
     const audioElement = document.getElementById(
@@ -28,14 +52,17 @@ const AudioController = () => {
     <div className=" h-[8vh] bg-gray-950 text-white">
       {currentStation?.metaURL ? (
         <>
-          <audio id="audio-player" src={currentStation.metaURL + "/stream"}></audio>
-          <button
-            onClick={handlePlayPause}
-            style={{ marginTop: "20px", padding: "10px 20px" }}
-          >
-            {isPlaying ? "Pause" : "Play"}
-          </button>
-
+          <audio id="audio-player" src={currentStation.metaURL}></audio>
+          <div className="flex justify-center items-center h-full">
+            <button
+              onClick={handlePlayPause}
+              className="text-white"
+              style={{ padding: "10px 20px" }}
+              disabled={!isPlayable}
+            >
+              {isPlaying ? "Pause" : "Play"}
+            </button>
+          </div>
         </>
       ) : (
         <p>loading...</p>

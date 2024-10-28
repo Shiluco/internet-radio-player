@@ -9,19 +9,19 @@
     {
       "ID": 2,
       "presetID": 2,
-      "stationName": "Deep House Radio - Bucharest - Romania",
+      "stationName": "Deep House Radio",
       "shoutcastURL": "http://yp.shoutcast.com/sbin/tunein-station.m3u?id=99563196"
     },
     {
       "ID": 3,
       "presetID": 3,
-      "stationName": "1.FM - CHILLOUT LOUNGE (WWW.1.FM)",
+      "stationName": "1.FM - CHILLOUT LOUNGE",
       "shoutcastURL": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1778139"
     },
     {
       "ID": 4,
       "presetID": 4,
-      "stationName": "1.FM - Bay Smooth Jazz (www.1.fm)",
+      "stationName": "1.FM - Bay Smooth Jazz",
       "shoutcastURL": "http://yp.shoutcast.com/sbin/tunein-station.m3u?id=1852944"
     },
     {

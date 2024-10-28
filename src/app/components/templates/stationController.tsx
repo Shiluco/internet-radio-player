@@ -14,10 +14,10 @@ const AudioController = () => {
   };
 
   return (
-    <div className="h-[2vh] bg-gray-300  ">
-      <div className="w-[calc(99vw-10px)] mx-auto">
+    <div className="h-[2vh] bg-gray-100 ">
+      <div className="w-[100vw] mx-auto">
         <input
-          className="w-full appearance-none h-3 bg-gray-400 rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-900"
+          className="w-full appearance-none h-1 bg-black rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-900"
           type="range"
           id="slider"
           min={1}

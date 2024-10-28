@@ -57,14 +57,14 @@ const StationInfo = () => {
         ) : (
           <p
             className={`absolute bottom-6 left-0 font-sfPro font-bold`}
-            style={{ fontSize: "12rem", padding: 0, lineHeight: 1 }}
+            style={{ fontSize: "8rem", padding: 0, lineHeight: 1 }}
           >
             {"00." + (currentStation ? currentStation.presetID : "N/A")}
           </p>
         )}
 
         <p
-          className="absolute bottom-0 left-5 text-2xl font-sfPro font-light truncate"
+          className="absolute bottom-0 left-4 text-1xl font-sfPro font-bold truncate"
           style={{
             maxWidth: "calc(100% - 1rem)", // 右側の余白を確保
             whiteSpace: "nowrap", // 1行で表示
