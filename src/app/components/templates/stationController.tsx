@@ -1,25 +1,28 @@
 "use client";
 
+import useMediaControlStore from "@/store/mediaControlStore";
 import useStationStore from "@/store/stationStore";
 
 const AudioController = () => {
   const { stations, currentStation, setCurrentStation } = useStationStore();
+  const { setIsPlaying } = useMediaControlStore();
 
   // 型を指定
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPlaying(false); // 再生中の場合は停止
     setCurrentStation(Number(event.target.value)); // Numberに変換してセット
   };
 
   return (
-    <div className="relative h-1/8 bg-gray-500 text-red ">
-      <div className="w-11/12 mx-auto">
+    <div className="h-[2vh] bg-gray-300  ">
+      <div className="w-[calc(99vw-10px)] mx-auto">
         <input
-          className="w-full"
+          className="w-full appearance-none h-3 bg-gray-400 rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-900"
           type="range"
           id="slider"
           min={1}
           max={stations ? stations.length : 1}
-          value={currentStation?.presetID ?? 1} // currentStationがundefinedの場合1を設定
+          value={currentStation?.presetID ?? 1}
           onChange={handleChange}
           aria-label="Slider for selecting a value"
         />
@@ -27,5 +30,24 @@ const AudioController = () => {
     </div>
   );
 };
+
+<style jsx>{`
+  #slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 16px; /* サムの高さ */
+    width: 16px; /* サムの幅 */
+    background-color: orange; /* サムの色 */
+    border-radius: 50%; /* 丸い形にする */
+    cursor: pointer;
+  }
+
+  #slider::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    background-color: orange;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+`}</style>;
 
 export default AudioController;

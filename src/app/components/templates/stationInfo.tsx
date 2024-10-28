@@ -47,7 +47,7 @@ const StationInfo = () => {
 
   return (
     <>
-      <div className="relative h-1/2 bg-gray-200 text-black">
+      <div className="relative h-1/2 bg-gray-100 text-black">
         {fetchStationsStatus === "idle" || fetchStationsStatus === "loading" ? (
           <p
             className={`absolute bottom-6 left-0 text-7xl font-sfPro font-bold`}
@@ -64,13 +64,19 @@ const StationInfo = () => {
         )}
 
         <p
-          className={`absolute bottom-0 left-5 text-2xl font-sfPro  font-light`}
+          className="absolute bottom-0 left-5 text-2xl font-sfPro font-light truncate"
+          style={{
+            maxWidth: "calc(100% - 1rem)", // 右側の余白を確保
+            whiteSpace: "nowrap", // 1行で表示
+            overflow: "hidden", // 画面から飛び出た部分を隠す
+            textOverflow: "ellipsis", // 飛び出た部分に「…」を表示
+          }}
         >
           {currentStation?.stationName}
         </p>
 
         <p className="absolute bottom-1 right-6 text-sm text-gray-400 transform rotate-90 origin-bottom-right">
-          {currentStation?.shoutcastURL}
+          {currentStation?.metaURL}
         </p>
       </div>
     </>

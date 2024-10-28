@@ -1,5 +1,4 @@
 "use client";
-
 import useMediaControlStore from "@/store/mediaControlStore";
 import useStationStore from "@/store/stationStore";
 
@@ -26,7 +25,7 @@ const AudioController = () => {
   };
 
   return (
-    <div className="relative h-1/8 bg-gray-500">
+    <div className=" h-[8vh] bg-gray-950 text-white">
       {currentStation?.metaURL ? (
         <>
           <audio id="audio-player" src={currentStation.metaURL + "/stream"}></audio>
@@ -37,7 +36,6 @@ const AudioController = () => {
             {isPlaying ? "Pause" : "Play"}
           </button>
 
-          <p>{currentStation.metaURL}</p>
         </>
       ) : (
         <p>loading...</p>
