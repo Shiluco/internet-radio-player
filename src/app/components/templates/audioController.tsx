@@ -14,7 +14,13 @@ const AudioController = () => {
     ) as HTMLAudioElement;
 
     if (audioElement) {
-      const handleCanPlay = () => setIsPlayable(true);
+      const handleCanPlay = () =>
+      {
+        
+        setIsPlayable(true);
+        audioElement.play();
+        setIsPlaying(true);
+      };
       const handleError = () => {
         setIsPlayable(false);
         alert("音声を再生できません。");

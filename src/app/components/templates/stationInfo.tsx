@@ -75,7 +75,7 @@ const StationInfo = () => {
           {currentStation?.stationName}
         </p>
 
-        <p className="absolute bottom-1 right-6 text-sm text-gray-400 transform rotate-90 origin-bottom-right">
+        <p className="absolute bottom-1 right-6 text-sm text-black opacity-20 transform rotate-90 origin-bottom-right">
           {currentStation?.metaURL}
         </p>
       </div>
